@@ -1,0 +1,855 @@
+{
+  "参数": {
+    "desc": "参数解释，使用【#Config.id#】将引用外部配置",
+    "type": "参数值类型，不填则是Str，所有包含展示在前端文本的类型都是Str|List",
+    "default": "默认值，不填则没有默认值",
+    "require": "参数是否必填，true是必填，否则可省",
+    "example": "举例"
+  },
+  "self": {
+    "desc": "由于完整配置是由多个配置合并而来，但并不是所有配置都需要，又不想为了覆盖某个配置再新建一个文件，填写这里可以再次覆盖完整配置",
+    "type": "Dict",
+    "default": {},
+    "example": {
+      "columns": {
+        "status": {
+          "enums": [
+            {
+              "label": "",
+              "value": ""
+            }
+          ]
+        }
+      }
+    }
+  },
+  "前端控件相关": "-----------------------------------------------------------------------------------------------------",
+  "config": {
+    "calc": {
+      "desc": "点击单元格数字是否自动计算",
+      "type": "Bool",
+      "default": false
+    },
+    "summary": {
+      "desc": "表格是否显示尾部合计行",
+      "type": "Bool",
+      "default": false
+    },
+    "watermark": {
+      "desc": "表格中的水印",
+      "type": "Str|Dict",
+      "example": {
+        "example_1": "xx所属，传播必究",
+        "example_2": {
+          "wm_txt": "xx所属，传播必究",
+          "wm_width": "宽度",
+          "wm_height": "高度",
+          "wm_x_space": "宽度间距",
+          "wm_y_space": "高度间距",
+          "wm_angle": "倾斜角度",
+          "wm_color": "颜色",
+          "wm_opacity": "透明度",
+          "wm_fontsize": "字体大小"
+        }
+      }
+    },
+    "selectable": {
+      "desc": "表格是否显示复选框",
+      "type": "Bool",
+      "default": true
+    },
+    "clearvform": {
+      "desc": "审核数据前是否清空审核表单数据",
+      "type": "Bool",
+      "default": false
+    }
+  },
+  "数据库相关": "-------------------------------------------------------------------------------------------------------",
+  "db": {
+    "desc": "Django配置中的数据库别名",
+    "default": "default"
+  },
+  "obj": {
+    "desc": "数据可查询对象，用于查询数据，介于FROM和WHERE之间的SQL片段，【直接调用】",
+    "require": true
+  },
+  "table": {
+    "desc": "数据可编辑对象，用于新增、更新、删除数据，一般是实体表，【直接调用】",
+    "default": "*obj按空格分隔，取第一个值"
+  },
+  "alias": {
+    "desc": "对象别名，用于对象字段的引用",
+    "default": "a"
+  },
+  "orders": {
+    "desc": "默认排序",
+    "default": "1 DESC"
+  },
+  "book": {
+    "desc": "数据手册的名字，一般和table相同，不填不展示，数据字典也不展示"
+  },
+  "sqls": {
+    "desc": "SQL语句集中管理，通过get_sql方法将默认填充**sgvs，此时如果需要再次填充数据，可使用{{}}进行转义",
+    "type": "Dict",
+    "default": {},
+    "example": {
+      "default_condition": {
+        "desc": "默认条件，【直接调用】，使用AND连接，为了避免条件优先级意外，建议包裹括号，【【不填充系统全局变量】】",
+        "example": "([STATUS] = '1')"
+      },
+      "limit_condition": {
+        "desc": "限制条件，【直接调用】，使用AND连接，为了避免条件优先级意外，建议包裹括号，将填充系统全局变量",
+        "example": "([STATUS] = '1' AND ([I_NAME] = {username} OR [U_NAME] = {username} OR [V_NAME] = {username}))"
+      },
+      "生成报表": "..."
+    }
+  },
+  "views": {
+    "desc": "浏览数据限制，即最多可浏览多少条，默认是0，无限制",
+    "type": "Int",
+    "default": 0
+  },
+  "sizes": {
+    "desc": "数据每页显示的数量可选值",
+    "type": "List",
+    "default": [
+      5,
+      10,
+      20,
+      50,
+      100
+    ]
+  },
+  "系统默认字段": "-----------------------------------------------------------------------------------------------------",
+  "key_id": {
+    "desc": "主键，【！！！不支持联合主键！！！】",
+    "default": "id"
+  },
+  "key_gid": {
+    "desc": "分组，不启用填false",
+    "type": "Str|Bool",
+    "default": "gid"
+  },
+  "key_status": {
+    "desc": "状态，不启用填false",
+    "type": "Str|Bool",
+    "default": "status"
+  },
+  "key_i": {
+    "desc": "录入，不启用填false或[false, false]",
+    "type": "List",
+    "default": [
+      "iname",
+      "idt"
+    ]
+  },
+  "key_u": {
+    "desc": "更新，不启用填false或[false, false]",
+    "type": "List",
+    "default": [
+      "uname",
+      "udt"
+    ]
+  },
+  "key_v": {
+    "desc": "审核，不启用填false或[false, false]",
+    "type": "List",
+    "default": [
+      "vname",
+      "vdt"
+    ]
+  },
+  "系统全局变量": "-----------------------------------------------------------------------------------------------------",
+  "sgvs": {
+    "desc": "当前账号的系统全局变量，用于填充字符串，所有的SQL语句将填充这些变量，以下变量不存在系统将默认赋值，也可自定义一些变量",
+    "default": {
+      "pk": "选中的主键值",
+      "pks": "选中的主键值列表（已拼接为字符串）：1,2,3,'4','5','6','a','b','c'",
+      "userid": "",
+      "username": "账号",
+      "fullname": "姓名",
+      "roleid": "",
+      "rolename": "当前选择的角色",
+      "conditions": "目前只有查询钩子函数才能调用，后期如果别的地方有调用再说（tu.sgvs['conditions'] = tu.conditions()）"
+    }
+  },
+  "一些控制参数": "-----------------------------------------------------------------------------------------------------",
+  "enable_df": {
+    "desc": "是否启用流程，启用填true，默认是example的四个key的配置，或者填写具体字段",
+    "type": "Bool|dict",
+    "default": false,
+    "example": {
+      "TO": "TO",
+      "CC": "CC",
+      "SIGN": "SIGN",
+      "STAMP": "STAMP，此字段不填表示不启用"
+    }
+  },
+  "enable_add": {
+    "desc": "表示允许新增数据",
+    "type": "Bool",
+    "default": true
+  },
+  "enable_all": {
+    "desc": "表示允许查看所有组的数据",
+    "type": "Bool",
+    "default": true
+  },
+  "enable_s_msg": {
+    "desc": "每次查询后执行SQL，结果作为消息返回",
+    "type": "Str|Bool",
+    "default": false,
+    "example": "*sqls.key"
+  },
+  "enable_e_mail": {
+    "desc": "编辑数据时显示消息模块",
+    "type": "Object|Bool",
+    "default": false,
+    "example": {
+      "to": "123456 , 789000",
+      "cc": "",
+      "title": "默认标题，可选：{0}-{1}",
+      "content": "默认内容，可选：{1}-{2}",
+      "keys": [
+        "*columns.key的内容会填充到title或content"
+      ]
+    }
+  },
+  "enable_v_mail": {
+    "desc": "审核数据时显示消息模块",
+    "type": "Object|Bool",
+    "default": false,
+    "example": {
+      "to": "",
+      "cc": "",
+      "title": "默认标题，可选：{0}-{1}",
+      "content": "默认内容，可选：{1}-{2}",
+      "keys": [
+        "*columns.key的内容会填充到title或content"
+      ]
+    }
+  },
+  "autocompletes": {
+    "key": {
+      "label": "展示的值，直接拼接，注意SQL注入，例如：[XM] + ':' + [RZSJ]",
+      "value": "实际的值，直接拼接，注意SQL注入，例如：[ID]"
+    }
+  },
+  "工具": "------------------------------------------------------------------------------------------------------------",
+  "tools": {
+    "组件名": {
+      "label": "中文名",
+      "width": "dialog's width: 10px | 10% | 10vw | fit-content",
+      "kwargs": {
+        "...": "组件所需的参数"
+      }
+    },
+    "sum": {
+      "label": "求和"
+    },
+    "calc": {
+      "label": "计算"
+    },
+    "unique": {
+      "label": "去重",
+      "kwargs": {
+        "limit": "显示详细时最多展现的条数，默认是0，表示无限制"
+      }
+    },
+    "del": {
+      "label": "删除",
+      "width": "600px",
+      "kwargs": {
+        "condition": "*sqls.key，删除限制条件，有则直接调用"
+      }
+    },
+    "impd": {
+      "label": "导入",
+      "width": "600px"
+    },
+    "expd": {
+      "label": "导出",
+      "kwargs": {
+        "limit": "导出条数限制，默认是0，表示无限制"
+      }
+    },
+    "enum": {
+      "label": "筛选项",
+      "width": "600px",
+      "kwargs": {
+        "keys": {
+          "*columns.key": "Config.id，这个key的枚举值所在的配置ID，查找顺序：self.columns > columns > self"
+        }
+      }
+    },
+    "chart": {
+      "label": "图表",
+      "width": "fit-content",
+      "kwargs": {
+        "chart": "*charts.key"
+      }
+    },
+    "print": {
+      "label": "合并打印",
+      "width": "fit-content",
+      "kwargs": {
+        "layouts": [
+          {
+            "label": "单据名称",
+            "value": "*layouts.key"
+          }
+        ]
+      }
+    }
+  },
+  "图表": "------------------------------------------------------------------------------------------------------------",
+  "charts": {
+    "desc": "图表配置",
+    "example": {
+      "chart": {
+        "types": [
+          {
+            "label": "",
+            "value": "option"
+          }
+        ],
+        "inits": {
+          "default": {
+            "": "echarts初始化时的配置，不存在时取default，default不存在时是：{ width: 1200, height: 600 }"
+          },
+          "option": {}
+        },
+        "options": {
+          "default": {
+            "": "echarts渲染时的配置，不存在时取default，必填项，加载dataset后，执行echarts.setOption"
+          },
+          "option": {}
+        },
+        "datasets": {
+          "option": [
+            {
+              "sql": "*sqls.key",
+              "raw": "详细页的图表不使用此参数，默认是false，表示从当前查询数据集中获取，否则直接调用sql",
+              "keys": "填写则压缩成字典",
+              "path": "赋值到option的路径，多个路径用;分割，因为经过函数处理后的数据可能有多个返回值，以对应多个路径，必填项",
+              "funcs": [
+                {
+                  "func": "数据处理函数名称",
+                  "args": [
+                    "参数"
+                  ]
+                },
+                {
+                  "func": "splitData：分割数据，第一列是x轴，第二列是顶部系列，第三列是y轴"
+                },
+                {
+                  "func": "buildMap：构建图，第一列是x轴，第二列是y轴，第三列是值"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "单据": "------------------------------------------------------------------------------------------------------------",
+  "layouts": {
+    "desc": "单据布局",
+    "example": {
+      "layout": {
+        "title": "可以不填，当详细页有多个单据时，打印提醒的时候可以区分",
+        "showPrint": false,
+        "enableSelf": "默认是false，启用填true，将前端选中的数据作为subData.0.self，此时是一张单据",
+        "a4n": "一张A4纸可以放几个单据，默认是0，表示无限制，填数字",
+        "watermark": "*watermark",
+        "tableStyle": "",
+        "tableClass": "",
+        "colWidths": [
+          40,
+          55,
+          55
+        ],
+        "trs": [
+          {
+            "class": "border[-10,-15,-20],border-first[-10,-15,-20],border-last[-10,-15,-20]",
+            "style": "",
+            "tds": [
+              {
+                "label": "{keys's index}...，可以不填，当keys也不存在时，默认为&nbsp;",
+                "keys": [
+                  "当keys是字符串时将自动转换为[keys]",
+                  "填__no__将自动生成序号，如果是单表或者不生成空白行，则始终是1",
+                  "先从data中取key的值",
+                  "不存在则从subData中取key的值，将自动填充索引号，例如key是default.{0}.key，将转换为default.1.key"
+                ],
+                "class": "border-right[-10,-15,-20],border-left[-10,-15,-20],border-top[-10,-15,-20],border-bottom[-10,-15,-20]",
+                "style": "",
+                "rowspan": "可以不填，默认是1",
+                "colspan": "可以不填，默认是1",
+                "subClass": "",
+                "subStyle": "",
+                "checkboxs": [],
+                "boxPos": "left | right",
+                "boxClass": "box-small | box-middle | box-big",
+                "boxStyle": "",
+                "funcs": [
+                  {
+                    "func": "过滤器的名称，funcs存在则必填，用于处理keys对应的数据",
+                    "args": [
+                      "过滤器参数，可以不填"
+                    ]
+                  },
+                  {
+                    "func": "str_map",
+                    "args": [
+                      "abbr|currency|company|abbr|full"
+                    ]
+                  },
+                  {
+                    "func": "add_pre_zero",
+                    "args": [
+                      "长度，表示补多少个0"
+                    ]
+                  },
+                  {
+                    "func": "del_suf_zero",
+                    "args": [
+                      "去除浮点数后面多余的0，如果是0，此参数作为0的替换值，默认是空白"
+                    ]
+                  },
+                  {
+                    "func": "format_dt",
+                    "args": [
+                      "YYYY-MM-DD HH:mm:ss"
+                    ]
+                  },
+                  {
+                    "func": "format_datetime：去除datetime中的字母T"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tables": [
+              "subData.key",
+              "默认是subData.keys"
+            ],
+            "length": "默认是tables里子表最长的那个，否则严格取此长度，多了截断，少了填充空白",
+            "tr": {
+            }
+          }
+        ],
+        "subData": {
+          "default": {
+            "sql": "*sqls.key",
+            "keys": "填写则压缩成字典"
+          }
+        },
+        "datasets": {
+          "data": [
+            "前端构造datasets，data是主表数据，点击【详细】时只有一条，点击【工具】时有多条"
+          ],
+          "subData": [
+            {
+              "default": [
+                "data中一条，对应subData中一条，subData中一条是一个数据集（格式：{别名：[]}），别名默认是default，表示主表只有一个子表（关联表）"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "字段": "------------------------------------------------------------------------------------------------------------",
+  "columns": {
+    "key": {
+      "name": "数据库字段名，会【封装】字段，不会转换大小写，不填则取key",
+      "label": "显示的名称，不存在则取name",
+      "type": "默认是str，枚举值是：num, date, time, datetime, file?!, enum?!, remote?, cascade, str|text|richtext",
+      "enabled": [
+        "s - 查询",
+        "e - 编辑",
+        "v - 审核（默认没有）",
+        "a - 所有可传递给前端的字段列表",
+        "d - 所有可显示的字段列表（作为主表时）",
+        "r - 所有可显示的字段列表（作为子表时）"
+      ],
+      "查询": "--------------------------------------------------------------------------------------------------------",
+      "link_query": "子查询，取*sqls.key，【直接调用】，如：[当前表的字段] IN (SELECT [关联表字段] FROM [关联表] WHERE {})",
+      "显示": "--------------------------------------------------------------------------------------------------------",
+      "expression": "表达式，取*sqls.key，【直接调用】，可以不填",
+      "fixed": "默认是false，true/left固定在左侧，right固定在右侧",
+      "width": "列固定宽度，无默认值",
+      "link": "超链接，没有则不填，/path/to?name={0}",
+      "link_keys": [
+        "*columns.key，不存在时取当前值"
+      ],
+      "link_name": "如果存在则替换单元格内容",
+      "encode": "对link_keys的值是否编码，默认false，编码填true",
+      "tooltip": true,
+      "cell_style": "white-space: pre-wrap;",
+      "funcs": [
+        {
+          "func": "过滤器的名称，funcs存在则必填，用于处理keys对应的数据",
+          "args": [
+            "过滤器参数，可以不填"
+          ]
+        },
+        {
+          "func": "condition_style：根据数据内容设置cell的style，第一个参数是条件判断，第二个是比较的值（字符串|数值|列表）",
+          "args": [
+            {
+              "gt": "大于值时的style，其中值如果是【now-1】表示大于昨天，【now+1】表示大于明天，下同",
+              "lt": "小于值时的style，",
+              "in": "在列表内时的style"
+            },
+            [
+              "未发布"
+            ]
+          ]
+        },
+        {
+          "func": "str_map：数据映射，第一个参数可以是前端settings的属性，也可以是对象",
+          "args": [
+            "key or {}"
+          ]
+        },
+        {
+          "func": "add_pre_zero：数据前面补零，第一个参数表示数据总共多长",
+          "args": [
+            "长度"
+          ]
+        },
+        {
+          "func": "del_suf_zero：去除浮点数后面多余的0，第一个参数默认是空白字符，表示如果是0则显示该字符",
+          "args": [
+            ""
+          ]
+        },
+        {
+          "func": "format_datetime：将datetime中T替换成空格"
+        },
+        {
+          "func": "format_dt：格式化日期，第一个参数是日期格式",
+          "args": [
+            "yyyy-MM-dd"
+          ]
+        },
+        {
+          "func": "display_time、display_date、display_datetime"
+        }
+      ],
+      "编辑和审核": "--------------------------------------------------------------------------------------------------",
+      "divider": "表单项上方生成分割线",
+      "style": "表单项样式",
+      "placeholder": "编辑字段的提示语",
+      "autocomplete": {
+        "url": "type为remote有效，比enums优先，格式为：/datacenter/path",
+        "key": "*autocompletes.key",
+        "edit": "默认不可编辑，可编辑填true",
+        "query": {
+          "关联表的key": "值为null时将填充当前表单项的值，默认是：{\"id\": null}",
+          "id": null,
+          "gid": "1"
+        }
+      },
+      "ckeditor_media_path": "richtext上传图片时保存的路径，默认是meida/article，填写则在此文件夹下创建目录",
+      "default": "新增数据时的默认值，可以不填",
+      "null": true,
+      "sizes": "文件上传总大小，单位是KB，默认是0，无限制，此时limit是文件数量，0是无限制，默认是1",
+      "limit": "多选限制，默认是数字1，表示单选，0表示无限制，否则表示选择的数量上限，多选时查询时是单选，单选时查询时是多选",
+      "ranges": [
+        "最小",
+        "最大"
+      ],
+      "regexs": [
+        [
+          "不匹配时返回的消息，只能是字符串，或者填映射值_Txxxx，需提前在【消息映射】(config.id=5)中配置",
+          "正则表达式",
+          "备注"
+        ],
+        [
+          "列表内任意一个匹配则有效"
+        ]
+      ],
+      "ref": "联动表单、联动筛选时的*columns.key，remote和enum时必须单选",
+      "filters": [
+        "联动表单：*ref.val存在此列表或者此列表为空时，才显示"
+      ],
+      "create": "枚举类型是否允许创建值，true允许，否则不允许",
+      "enums": [
+        {
+          "value": "远程查询时是Config.id，通过value获取label",
+          "label": "远程查询时是Config.id，通过label获取value",
+          "filters": [
+            "联动筛选：*ref.val存在此列表或者此列表为空时，才显示"
+          ],
+          "disabled": false,
+          "children": [
+          ]
+        }
+      ]
+    },
+    "id": "#10#",
+    "gid显示": "#11#",
+    "gid隐藏": "#12#",
+    "status": "#13#",
+    "iname": "#14#",
+    "idt": "#15#",
+    "uname": "#16#",
+    "udt": "#17#",
+    "vname": "#18#",
+    "vdt": "#19#",
+    "#31#": "#公司部门岗位#",
+    "GS": "公司",
+    "BM": "部门",
+    "GW": "岗位",
+    "#26#": "#审核信息#",
+    "SQ": "申请",
+    "HD": "核对",
+    "ZG": "主管",
+    "SP": "审批",
+    "FH": "复核",
+    "CN": "出纳",
+    "#24#": "#送审信息#",
+    "DF": "送审记录",
+    "TO": "发送给",
+    "CC": "抄送给",
+    "#25#": "#签名信息#",
+    "SIGN": "职位",
+    "STAMP": "签名"
+  },
+  "详细": "------------------------------------------------------------------------------------------------------------",
+  "relations": {
+    "key": {
+      "type": "rTable(默认)|rLayout|rChart|rDatacenter",
+      "title": "显示的标题，没有则不显示",
+      "kwargs": {}
+    },
+    "table": {
+      "title": "子表",
+      "kwargs": {
+        "keys": [
+          "*columns.key"
+        ],
+        "conf": "Config.id or conf，展示的表格只读",
+        "condition": "*sqls.key，为conf时的关联条件，将合并**sgvs和*keys作为参数填充SQL"
+      }
+    },
+    "datacenter": {
+      "title": "关联表",
+      "type": "rDatacenter",
+      "kwargs": {
+        "path": "关联表的路由，必须在菜单中存在",
+        "fill": "默认是：{0},，query中主表的值填充到这里作为真正的值",
+        "query": {
+          "关联表的key": "主表（当前）的key，将从主表中获取key的值进行替换，作为查询数据的默认值，key没找到就用key作为值"
+        },
+        "data": {
+          "关联表的key": "主表（当前）的key，将从主表中获取key的值进行替换，作为新增数据的默认值，key没找到就用key作为值"
+        }
+      }
+    },
+    "*charts.key": {
+      "title": "图表",
+      "type": "rChart",
+      "kwargs": {
+        "chart": "*charts.key要和relations.key一样"
+      }
+    },
+    "*layouts.key": {
+      "title": "单据",
+      "type": "rLayout",
+      "kwargs": {
+        "layout": "*layouts.key要和relations.key一样"
+      }
+    }
+  },
+  "工具列表": "【t_list】可作为权限管理可编辑属性--------------------------------------------------------------------------",
+  "t_list": {
+    "desc": "数据工具列表，默认是true，表示所有，否则表示当前，空列表无权限",
+    "type": "List|Bool",
+    "default": true
+  },
+  "详细列表": "【r_list】可作为权限管理可编辑属性--------------------------------------------------------------------------",
+  "r_list": {
+    "desc": "数据详细列表，默认是true，表示所有，否则表示当前，空列表无权限",
+    "type": "List|Bool",
+    "default": true
+  },
+  "查询列表": "【s_list】可作为权限管理可编辑属性--------------------------------------------------------------------------",
+  "s_list": {
+    "desc": "可查询的字段列表，默认是true，表示所有，否则表示当前，空列表无权限",
+    "type": "List|Bool",
+    "default": true
+  },
+  "显示列表": "【d_a_list、d_d_list、d_r_list】可作为权限管理可编辑属性-----------------------------------------------------",
+  "d_a_list": {
+    "desc": "可展示的字段列表，默认是true，表示所有，否则表示当前，空列表无权限",
+    "type": "List|Bool",
+    "default": true
+  },
+  "d_d_list": {
+    "desc": "可显示的字段列表（主表），默认是true，表示所有，否则表示当前，空列表无权限",
+    "type": "List|Bool",
+    "default": true
+  },
+  "d_r_list": {
+    "desc": "可显示的字段列表（子表），默认是true，表示所有，否则表示当前，空列表无权限",
+    "type": "List|Bool",
+    "default": true
+  },
+  "编辑配置": "【e_list_status】可作为权限管理可编辑属性-------------------------------------------------------------------",
+  "e_conf": {
+    "default_set": {
+      "desc": "编辑数据（新增或更新）时的默认值，【字段和值直接调用】",
+      "type": "Dict|Bool",
+      "default": {
+        "*key_status.name": "'0'"
+      },
+      "example": {
+        "STATE": "CASE WHEN [STATUS] = '1' THEN '0' ELSE '1' END"
+      }
+    },
+    "func_b": {
+      "desc": "编辑数据前(before)调用的钩子函数",
+      "type": "List",
+      "example": [
+        {
+          "func": "apps.datacenter.hooks.flush_perm",
+          "agrs": [
+            "key_perms",
+            "key_staffid"
+          ],
+          "error_continue": false
+        },
+        {
+          "func": "apps.datacenter.hooks.send_mail",
+          "agrs": [
+            {
+              "to": "{key} , 123456",
+              "cc": "{key} , {key}",
+              "title": "{key}-{key}",
+              "content": "{key}-{key}<a href='{_url}'></a>",
+              "attachments": "{key}"
+            },
+            [
+              "_url:数据定位",
+              "key"
+            ]
+          ],
+          "error_continue": true
+        }
+      ]
+    },
+    "func_a": "同*e_conf.func_b",
+    "msg": {
+      "desc": "编辑数据成功后返回的消息，将填充rowcount，false则不返回消息",
+      "type": "Str|Bool",
+      "default": "_T0000\f{}"
+    }
+  },
+  "e_conf_status": {
+    "desc": "不同状态的编辑配置，其配置不存在时均取默认的e_conf，值为false时忽略操作",
+    "type": "Dict",
+    "example": {
+      "0": {}
+    }
+  },
+  "e_list": {
+    "desc": "可编辑的字段列表（编辑），默认是true，表示所有，否则表示当前，空列表无权限",
+    "type": "List|Bool",
+    "default": true
+  },
+  "e_list_status": {
+    "desc": "e_list_status为false时禁止一切编辑，默认为true允许所有编辑。值为不同状态可编辑的字段列表，状态不存在或值为true时取e_list，为空列表时禁止编辑",
+    "type": "Dict|Bool",
+    "default": true,
+    "example": {
+      "0": []
+    }
+  },
+  "e_list_super": {
+    "desc": "超级编辑，忽略iuv、status、e_conf、e_list_cross，为了安全起见，手动赋予可随意编辑的字段列表，空列表无权限",
+    "type": "List",
+    "default": []
+  },
+  "e_list_cross": {
+    "desc": "跨表更新，通过keys从表单数据取值，获取参数值后删除，值不存在为null，值为NULL的表示删除值，和编辑数据合并SQL，组成事务",
+    "type": "Dict",
+    "default": {},
+    "example": {
+      "sql": "*sqls.key",
+      "keys": [
+        "*forms.key"
+      ]
+    }
+  },
+  "审核命令": "--------------------------------------------------------------------------------------------------------",
+  "commands": {
+    "desc": "审核的指令，实际是UPDATE语句片段，需注意不能和v_conf.default_set冲突",
+    "type": "Dict",
+    "default": {},
+    "example": {
+      "command": "UPDATE时，执行SET的SQL，【直接调用】，null时忽略",
+      "0": null,
+      "a": "[STATUS] = '0', [CWZG] = NULL, [CN] = NULL, [BMZG] = NULL, [LKR] = NULL"
+    }
+  },
+  "v_cmds": {
+    "desc": "审核的选项",
+    "type": "List",
+    "default": [
+      {
+        "attach": "此命令是否携带表单数据，默认是true，【审核表单的数据有效性一般在触发器里控制】",
+        "command": "0",
+        "label": [
+          "审核",
+          "Verify"
+        ],
+        "tips": [
+          "这意味着数据有效，请确认是否继续？",
+          "This means that the data is valid. Are you sure you want to continue?"
+        ],
+        "type": "''|default|info|success|warning|text|danger|primary"
+      }
+    ]
+  },
+  "v_cmds_status": {
+    "desc": "不同状态的审核选项，其配置不存在时均取默认的v_cmds",
+    "type": "Dict"
+  },
+  "审核配置": "【v_list_status】可作为权限管理可编辑属性-------------------------------------------------------------------",
+  "v_conf": {
+    "default_set": {
+      "desc": "审核数据时的默认值，【字段会封装，值直接调用】，当commands存在时，需填写false或保证更新状态的语句只有一个",
+      "type": "Dict|Bool",
+      "default": {
+        "*key_status.name": "'1'"
+      },
+      "example": {
+        "STATE": "CASE WHEN [STATUS] = '1' THEN '0' ELSE '1' END"
+      }
+    },
+    "func_b": "同*e_conf.func_b",
+    "func_a": "同*e_conf.func_b",
+    "msg": "同*e_conf.msg"
+  },
+  "v_conf_status": {
+    "desc": "不同状态的审核配置，其配置不存在时均取默认的v_conf，值为false时忽略操作",
+    "type": "Dict"
+  },
+  "v_list": {
+    "desc": "可编辑的字段列表（审核），默认是true，表示所有，否则表示当前，空列表无表单生成",
+    "type": "List|Bool",
+    "default": true
+  },
+  "v_list_status": {
+    "desc": "v_list_status为false时禁止一切审核，为true允许所有审核。值为可审核状态，状态不存在或值为false时则不允许审核，默认为true取v_list，为空列表时没有表单生成",
+    "type": "Dict|Bool",
+    "default": {
+      "0": true
+    }
+  }
+}
