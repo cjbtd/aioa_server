@@ -1,3 +1,4 @@
+-- VIEW TABLE TRIGGER FUNCTION PROCEDURE
 -- use root
 
 SET GLOBAL log_bin_trust_function_creators=1;
@@ -10,7 +11,7 @@ DELIMITER ;;;
 -- Description : 打印数据库对象创建规范
 -- Modify [1]  : Dawn, 2021-04-21, 适配MySQL
 -- ============================================================
-CREATE PROCEDURE SP_(IN p_TABLE_NAME VARCHAR(128))
+CREATE PROCEDURE `SP_`(IN p_TABLE_NAME VARCHAR(128))
 BEGIN
     DECLARE v_SQL_TEXT TEXT;
 
@@ -83,7 +84,7 @@ END;
 -- Create date : 2021-04-21
 -- Description : 生成MySQL辅助表
 -- ============================================================
-CREATE PROCEDURE SP_CREATE_AUXILIARY()
+CREATE PROCEDURE `SP_CREATE_AUXILIARY`()
 BEGIN
     DECLARE v_TOTAL INT;
 
@@ -137,7 +138,7 @@ END;
 
 ;;;
 
-CALL SP_CREATE_AUXILIARY();
+CALL `SP_CREATE_AUXILIARY`();
 
 ;;;
 
@@ -146,7 +147,7 @@ CALL SP_CREATE_AUXILIARY();
 -- Create date : 2019-04-01
 -- Description : 同步数据表和数据字典
 -- ============================================================
-CREATE PROCEDURE SP_SYNC_DB_OBJ()
+CREATE PROCEDURE `SP_SYNC_DB_OBJ`()
 BEGIN
     INSERT INTO `base_databook`(`db`, `table`, `enable`, `edt`, `udt`)
     SELECT `TABLE_SCHEMA`
@@ -240,7 +241,7 @@ END;
 -- Create date : 2019-04-01
 -- Description : 合并数据表和数据字典
 -- ============================================================
-CREATE PROCEDURE SP_MERGE_DB_OBJ()
+CREATE PROCEDURE `SP_MERGE_DB_OBJ`()
 BEGIN
 UPDATE `base_datadict` c, information_schema.COLUMNS a, `base_databook` b
    SET c.`status` = '1'
@@ -354,7 +355,7 @@ END;
 -- Create date : 2021-04-21
 -- Description : 有效账号的有效模块及权限，列名顺序不可更改
 -- ============================================================
-CREATE VIEW V_USER_MODULES
+CREATE VIEW `V_USER_MODULES`
 AS
 WITH cte_perms AS (
   SELECT rp.`id`,`user`,`module_id`,`perm_config_id`
@@ -1073,7 +1074,7 @@ END;
 -- Create date : 2021-04-21
 -- Description : 通讯录更新触发器，生成工号、赋予菜单和数据权限
 -- ============================================================
-CREATE TRIGGER TR_T_COMPANY_STAFF_U
+CREATE TRIGGER `TR_T_COMPANY_STAFF_U`
     BEFORE UPDATE
     ON `T_COMPANY_STAFF`
     FOR EACH ROW

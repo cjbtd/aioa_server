@@ -56,7 +56,7 @@ MIDDLEWARE = [
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8082']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8082', 'https://www.chenjiabintd.com', 'http://www.chenjiabintd.com']
 
 ROOT_URLCONF = 'aioa.urls'
 

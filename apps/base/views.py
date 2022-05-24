@@ -120,6 +120,12 @@ def log_in(request):
 
         Cache(KEY_UNAME, username).set(session_key)
 
+        # Some agent is too long, must be limited to 150 chars
+        if agent and len(agent) > 150:
+            agent = agent[:45] + ' ... ' + agent[-90:]
+        else:
+            pass
+
         sql = sql_update_user_info.format(escape(username), escape(agent), escape(ips), escape(ip))
 
         logger.info(sql)
