@@ -3980,7 +3980,7 @@ INSERT INTO aioa.base_config (id, name, conf, type, remark, edt, udt) VALUES (58
   },
   "layouts": {
     "detail": {
-      "tableStyle": "font-family: KaiTi; width:1400px; margin: 10px;",
+      "tableStyle": "margin: 10px; font-size: 16px;",
       "colWidths": [
         1000
       ],
@@ -6158,3 +6158,52 @@ INSERT INTO aioa.T_COMPANY_STAFF_INFO_JL (ID, GID, STATUS, I_DT, U_DT, V_DT, I_N
 
 INSERT INTO aioa.T_COMPANY_STAFF_INFO_XL (ID, GID, STATUS, I_DT, U_DT, V_DT, I_NAME, U_NAME, V_NAME, FK, YX, ZY, XZ, XL, FJ) VALUES (1, 0, '0', '2022-05-14 03:57:43', null, null, 'admin', null, null, 1, '复旦大学', '电子工程', '4', '本科', null);
 INSERT INTO aioa.T_COMPANY_STAFF_INFO_XL (ID, GID, STATUS, I_DT, U_DT, V_DT, I_NAME, U_NAME, V_NAME, FK, YX, ZY, XZ, XL, FJ) VALUES (2, 0, '0', '2022-05-14 03:58:09', null, null, 'admin', null, null, 1, '交通大学', '软件工程', '4', '硕士', null);
+
+INSERT INTO aioa.T_COMPANY_NOTICE (ID, GID, STATUS, I_DT, U_DT, V_DT, I_NAME, U_NAME, V_NAME, TITLE, `GROUPS`, CONTENT, READERS) VALUES (1, 0, '1', '2022-05-17 00:39:49', '2022-05-17 02:49:18', '2022-05-17 02:49:47', 'admin', 'admin', 'admin', '搜索语法', null, '<h2><strong>浏览器地址栏出现【</strong><span style="color:#d35400;"><span><strong>datacenter</strong></span></span><strong>】的，均有如下搜索语法</strong></h2>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family:Courier New,Courier,monospace;">一、字符串搜索（有模糊匹配）</span></p>
+
+<ul>
+	<li style="margin-left:40px;"><span style="font-family:Courier New,Courier,monospace;">abc &nbsp; &nbsp; &nbsp;模糊匹配abc</span></li>
+	<li style="margin-left:40px;"><span style="font-family:Courier New,Courier,monospace;">abc, &nbsp; &nbsp; 精确匹配abc</span></li>
+	<li style="margin-left:40px;"><span style="font-family:Courier New,Courier,monospace;">abc,def &nbsp;精确匹配abc或def</span></li>
+	<li style="margin-left:40px;"><span style="font-family:Courier New,Courier,monospace;">abc|def&nbsp; 模糊匹配abc或def，支持^、$、~匹配符号</span></li>
+	<li style="margin-left:40px;"><span style="font-family:Courier New,Courier,monospace;">abc&amp;def&nbsp; 模糊匹配abc和def，两者都得包含，支持^、$、~匹配符号</span></li>
+	<li style="margin-left:40px;"><span style="font-family:Courier New,Courier,monospace;">^abc &nbsp; &nbsp; 模糊匹配以abc开头的数据</span></li>
+	<li style="margin-left:40px;"><span style="font-family:Courier New,Courier,monospace;">abc$ &nbsp; &nbsp; 模糊匹配以abc结尾的数据</span></li>
+	<li style="margin-left:40px;"><span style="font-family:Courier New,Courier,monospace;">^abc$ &nbsp; &nbsp;等价于精确匹配abc</span></li>
+	<li style="margin-left:40px;"><span style="font-family:Courier New,Courier,monospace;">~abc&nbsp; &nbsp; &nbsp;波浪号开头表示反向查询</span></li>
+</ul>
+
+<p><br />
+<span style="font-family:Courier New,Courier,monospace;">二、数字搜索（无模糊匹配）</span></p>
+
+<ul>
+	<li style="margin-left:40px;"><span style="font-family:Courier New,Courier,monospace;">123 &nbsp; &nbsp; &nbsp;查找123</span></li>
+	<li style="margin-left:40px;"><span style="font-family:Courier New,Courier,monospace;">123,456 &nbsp;查找123或456</span></li>
+	<li style="margin-left:40px;"><span style="font-family:Courier New,Courier,monospace;">123-456 &nbsp;范围查找123到456的数据（闭区间，前后可省略一个）</span></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family:Courier New,Courier,monospace;">三、查找空值（NULL）和非空值（NOT NULL）</span></p>', null);
+INSERT INTO aioa.T_COMPANY_NOTICE (ID, GID, STATUS, I_DT, U_DT, V_DT, I_NAME, U_NAME, V_NAME, TITLE, `GROUPS`, CONTENT, READERS) VALUES (2, 0, '1', '2022-05-17 00:40:37', '2022-05-24 20:09:59', '2022-05-24 20:10:01', 'admin', 'admin', 'admin', '系统说明', null, '<h1>预览版说明</h1>
+
+<ul>
+	<li><span style="line-height:2.0em;">关闭了在线账号唯一性验证（排它性登录），即同一个账号可在不同地方登录</span></li>
+	<li><span style="line-height:2.0em;">数据库每日凌晨重置，如果有数据想固化，请给我发邮件</span></li>
+	<li><span style="line-height:2.0em;">暂时开放后台管理，可自行添加业务模块（菜单、模块、配置）</span></li>
+	<li><span style="line-height:2.0em;">配置可包含SQL，因为实际运行时由管理员管理，使用者是无法修改配置的，所以没有对SQL进行检查，通过注入的形式可创建表、视图等</span></li>
+</ul>
+
+<h1>添加业务模块</h1>
+
+<ul>
+	<li><span style="line-height:2.0em;">创建表（可在<a href="/admin/base/config/?q=通讯录-跨表更新" target="_blank">ID=47</a>的配置中进行SQL注入，然后更新任意一个通讯录进行触发）</span></li>
+	<li><span style="line-height:2.0em;">添加菜单</span></li>
+	<li><span style="line-height:2.0em;">添加模块（指定菜单，指定配置，菜单下只有一个模块时，模块值填0，如有多个，填不同值即可）</span></li>
+	<li><span style="line-height:2.0em;">添加配置（按照<a href="https://github.com/cjbtd/aioa_server/blob/main/conf/datacenter.json" rel="noopener norefferrer" target="_blank">datacenter.json</a>进行配置）</span></li>
+	<li><span style="line-height:2.0em;">上面步骤完成后在前端【权限管理】分配权限，刷新浏览器后即可访问</span></li>
+</ul>', null);
