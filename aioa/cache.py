@@ -12,6 +12,7 @@ KEY_MENUS = 'MENUS'
 KEY_METAS = 'METAS'
 KEY_ROLES = 'ROLES'
 KEY_PRINTED = 'PRINTED'
+KEY_TOKEN = 'TOKEN'
 
 conf = {
     'KEY': {
@@ -108,6 +109,12 @@ conf = {
     KEY_PRINTED: {
         'key': 'c_printed',
         'val': {'md51', 'md52'}
+    },
+    KEY_TOKEN: {
+        # c_token + md5(app + openid + session_key + js_code)
+        'key': 'c_token:{}',
+        'timeout': 3600,
+        'val': 'openid'
     },
 }
 

@@ -149,7 +149,7 @@ class RolePerm(models.Model):
 
 
 class UserRole(models.Model):
-    user = models.CharField(max_length=8, null=False, blank=False, verbose_name=u'账号')
+    user = models.CharField(max_length=64, null=False, blank=False, verbose_name=u'账号')
     role = models.ForeignKey(Role, on_delete=models.CASCADE, to_field='id', verbose_name='角色')
     enable = models.BooleanField(default=True, null=False, blank=False, verbose_name=u'启用')
     edt = models.DateTimeField(auto_now_add=True, verbose_name=u'录入时间')
@@ -165,7 +165,7 @@ class UserRole(models.Model):
 
 
 class UserPerm(models.Model):
-    user = models.CharField(max_length=8, null=False, blank=False, verbose_name=u'账号')
+    user = models.CharField(max_length=64, null=False, blank=False, verbose_name=u'账号')
     module = models.ForeignKey(Module, on_delete=models.CASCADE, to_field='id', verbose_name='模块')
     perm_config = models.ForeignKey(Config, on_delete=models.CASCADE, to_field='id', default=DEFAULT_PERM_CONFIG_ID,
                                     related_name='user_perm_config_id', verbose_name='权限配置')
@@ -184,7 +184,7 @@ class UserPerm(models.Model):
 
 
 class UserConf(models.Model):
-    user = models.CharField(max_length=8, null=False, blank=False, verbose_name=u'账号')
+    user = models.CharField(max_length=64, null=False, blank=False, verbose_name=u'账号')
     conf = models.TextField(default='{}', null=False, blank=False, verbose_name=u'配置')
     remark = models.TextField(null=True, blank=True, verbose_name=u'备注')
     edt = models.DateTimeField(auto_now_add=True, verbose_name=u'录入时间')

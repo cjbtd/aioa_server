@@ -2,8 +2,8 @@ from django.db import models
 
 
 class UserMail(models.Model):
-    by = models.CharField(max_length=8, null=False, blank=False, verbose_name=u'发送者')
-    me = models.CharField(max_length=8, null=False, blank=False, verbose_name=u'接收者')
+    by = models.CharField(max_length=64, null=False, blank=False, verbose_name=u'发送者')
+    me = models.CharField(max_length=64, null=False, blank=False, verbose_name=u'接收者')
     to = models.TextField(null=True, blank=True, verbose_name=u'发送列表')
     cc = models.TextField(null=True, blank=True, verbose_name=u'抄送列表')
     is_read = models.BooleanField(default=False, null=False, blank=False, verbose_name=u'已读')

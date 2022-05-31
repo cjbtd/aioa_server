@@ -83,7 +83,7 @@ class BaseTableUtils:
             self.form_data = json.loads(request.POST.get(self.k_form_data, '{}'))
 
             self.uid = request.user.id
-            self.fullname = request.user.first_name
+            self.fullname = request.user.first_name if self.uid else ''
 
             self.roles = get_roles(self.username)
             self.rid = to_int(request.COOKIES.get('rid'), self.default_rid)

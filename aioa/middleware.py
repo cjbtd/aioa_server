@@ -1,7 +1,7 @@
 from django.contrib.auth import logout
 from django.http import JsonResponse
 from django.utils.deprecation import MiddlewareMixin
-from .cache import Cache, KEY_UNAME, KEY_PATHS
+from .cache import Cache, KEY_PATHS, KEY_UNAME
 from .settings import v, s
 from .utils import logger, get_ip
 from apps.base.config import SystemConfig
